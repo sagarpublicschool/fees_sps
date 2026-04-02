@@ -218,10 +218,16 @@
     }
 
     async function saveData() {
-        // AUTO GENERATE RECEIPT NO.
-        let now = new Date();
-        let rNo = "SPS-" + now.getFullYear() + (now.getMonth()+1).toString().padStart(2,'0') + now.getDate().toString().padStart(2,'0') + "-" + Math.floor(1000 + Math.random() * 9000);
-        
+        // --- SIMPLE AUTO SERIAL NUMBER (01, 02, 03...) ---
+        let currentYear = new Date().getFullYear();
+        let nextSerial = 1; // Default start
+        // Agar pehle se records hain, to unki count + 1 karenge
+        if (allRecords && allRecords.length > 0) {
+            nextSerial = allRecords.length + 1;
+        }
+        // padStart(2, '0') se 1 ban jayega 01, 2 ban jayega 02
+        let rNo = "SPS_" + currentYear + "/" + nextSerial.toString().padStart(2, '0');
+      
         let data = {
             "Receipt No": rNo,
             "Month": document.getElementById('Month').value,

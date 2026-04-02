@@ -65,14 +65,12 @@
         box-sizing: border-box;
     }
 
+    .r-header { position: relative; }
     .r-header h2 { margin: 0; font-size: 16px; font-weight: 900; text-align: center; }
     .r-header p { margin: 1px; font-size: 7.5px; font-weight: bold; text-align: center; }
     
-    /* NEW: Logo and Cash Memo styling */
-    .memo-title { text-align: center; font-size: 10px; font-weight: bold; text-decoration: underline; margin-bottom: 2px; display: block; }
-    .header-main { display: flex; align-items: center; justify-content: center; position: relative; }
-    .school-logo { width: 50px; height: 50px; object-fit: contain; position: absolute; left: 0; }
-    .header-text { text-align: center; width: 100%; }
+    /* Logo Styling */
+    .school-logo { width: 45px; height: 45px; position: absolute; left: 5px; top: 15px; }
 
     .top-info { display: flex; justify-content: space-between; font-size: 9px; margin-top: 4px; border-bottom: 1px solid #000; padding-bottom: 2px; }
     .copy-tag { background: #000; color: #fff; padding: 1px 6px; font-size: 8px; font-weight: bold; text-transform: uppercase; border-radius: 2px; }
@@ -265,17 +263,18 @@
         const tr = document.createElement('tr');
         tr.setAttribute('data-h', val);
         tr.setAttribute('data-type', type);
+        // Removed 'calc-total' from class to fix double counting
         tr.innerHTML = `<td style="text-align:left; padding-left:10px;"><b>${val}</b></td>
                         <td width="50"><input type="number" class="q-in" value="1" oninput="calculate()"></td>
-                        <td width="80"><input type="number" class="a-in calc-total" oninput="calculate()" value="0"></td>
+                        <td width="80"><input type="number" class="a-in" oninput="calculate()" value="0"></td>
                         <td width="30" style="color:red; cursor:pointer" onclick="this.parentElement.remove();calculate()">✖</td>`;
         body.appendChild(tr);
     }
 
     function calculate() {
         let sub = 0;
-        document.querySelectorAll('.calc-total').forEach(i => sub += parseFloat(i.value) || 0);
-        document.querySelectorAll('.a-in').forEach(i => sub += parseFloat(i.value) || 0);
+        // Count main fields and added row fields exactly once
+        document.querySelectorAll('input.calc-total, input.a-in').forEach(i => sub += parseFloat(i.value) || 0);
         document.getElementById('sub_t').value = sub;
         let disc = parseFloat(document.getElementById('Discount').value) || 0;
         let paid = parseFloat(document.getElementById('Total Paid').value) || 0;
@@ -374,24 +373,21 @@
 
         let receiptNo = "S P S S __________";
         let dateVal = d["Paid Date"] || new Date().toLocaleDateString('en-GB');
-        let logoUrl = "https://drive.google.com/thumbnail?id=1pWEjzAU2G4AUC0RhIJ8cMHdLtLvQ4YJe&sz=w300";
+        let logo = "https://drive.google.com/thumbnail?id=1pWEjzAU2G4AUC0RhIJ8cMHdLtLvQ4YJe&sz=w300";
 
         return `
             <div class="receipt-inner">
-                <span class="memo-title">CASH MEMO</span>
                 <div class="r-header">
-                    <div style="display:flex; justify-content:space-between;"><span class="copy-tag">${type}</span><span style="font-size:8px">Contact No: 9279583673,9973048043</span></div>
-                    
-                    <div class="header-main">
-                        <img src="${logoUrl}" class="school-logo" alt="Logo">
-                        <div class="header-text">
-                            <h2>SAGAR PUBLIC SCHOOL</h2>
-                            <p>QUAZITOLA, BARSOI (KATIHAR)</p>
-                            <p style="font-size:7px">email: sagarpublicschool2023@gmail.com</p>
-                            <p style="font-size:7px">RTE Reg No.21211472023218114225</p>
-                            <p style="font-size:7px">UDISE No.10101122703</p>
-                        </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+                        <span class="copy-tag" style="width:70px;">${type}</span>
+                        <span style="font-weight:bold; font-size:10px; border:1px solid #000; padding:0 10px;">CASH MEMO</span>
+                        <span style="font-size:7.5px; width:70px; text-align:right;">Mob: 9279583673</span>
                     </div>
+                    <img src="${logo}" class="school-logo">
+                    <h2>SAGAR PUBLIC SCHOOL</h2>
+                    <p>QUAZITOLA, BARSOI (KATIHAR)</p>
+                    <p style="font-size:7px">email: sagarpublicschool2023@gmail.com</p>
+                    <p style="font-size:7px">RTE Reg No.21211472023218114225 | UDISE No.10101122703</p>
                 </div>
                 <div class="top-info"><span>Receipt No: ${receiptNo}</span><span>Date: ${dateVal}</span></div>
                 <div class="student-details">

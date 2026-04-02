@@ -5,7 +5,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-    /* INTERFACE STYLES */
+    /* INTERFACE STYLES - NO CHANGES */
     :root { --p: #1a237e; --bg: #f4f7f6; }
     body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding-top: 100px; }
     
@@ -169,6 +169,15 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxaS3qxwoTNr1MKwBEuwXYRZL7qQ_g4dKZWubdhBNunYHrQ9rTBHWWlJWrgCiC2ImVq/exec";
     let allRecords = [];
 
+    // AUTO-LOAD RECORDS ON START
+    window.onload = async () => {
+        try {
+            const res = await fetch(`${SCRIPT_URL}?action=searchData&id=all`);
+            const data = await res.json();
+            if(data && Array.isArray(data)) allRecords = data;
+        } catch(e) { console.log("Init load failed"); }
+    };
+
     function showView(view) {
         document.getElementById('entry-view').style.display = view === 'entry' ? 'block' : 'none';
         document.getElementById('search-view').style.display = view === 'search' ? 'block' : 'none';
@@ -199,7 +208,6 @@
         const body = document.getElementById(type + '-body');
         const tr = document.createElement('tr');
         tr.setAttribute('data-h', val);
-        // "readonly" hata diya gaya hai quantity badalne ke liye
         tr.innerHTML = `<td style="text-align:left; padding-left:10px;"><b>${val}</b></td>
                         <td width="50"><input type="number" value="1" oninput="calculate()"></td>
                         <td width="80"><input type="number" class="a-in" oninput="calculate()" value="0"></td>
@@ -220,6 +228,7 @@
         let now = new Date(); 
         let currentYear = now.getFullYear();
         
+        // AUTO SERIAL LOGIC
         let nextSerial = 1; 
         if (allRecords && allRecords.length > 0) {
             nextSerial = allRecords.length + 1;
@@ -258,6 +267,7 @@
         
         try {
             await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) });
+            allRecords.push(data); // Add to local list to increment next serial
             Swal.close();
             showDualReceipt(data);
         } catch(e) {

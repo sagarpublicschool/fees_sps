@@ -218,16 +218,17 @@
     }
 
     async function saveData() {
-        // --- SIMPLE AUTO SERIAL NUMBER (01, 02, 03...) ---
-        let currentYear = new Date().getFullYear();
-        let nextSerial = 1; // Default start
-        // Agar pehle se records hain, to unki count + 1 karenge
+        // --- 1. Date define karein (Zaroori) ---
+        let now = new Date(); 
+        let currentYear = now.getFullYear();
+        
+        // --- 2. SIMPLE AUTO SERIAL NUMBER Logic ---
+        let nextSerial = 1; 
         if (allRecords && allRecords.length > 0) {
             nextSerial = allRecords.length + 1;
         }
-        // padStart(2, '0') se 1 ban jayega 01, 2 ban jayega 02
         let rNo = "SPS_" + currentYear + "/" + nextSerial.toString().padStart(2, '0');
-      
+        
         let data = {
             "Receipt No": rNo,
             "Month": document.getElementById('Month').value,
